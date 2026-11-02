@@ -100,6 +100,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Escape') {
             closeModal();
             closeLightbox();
+            closeJudgeModal();
+        } else if ((e.key === 'j' || e.key === 'J') && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
+            toggleJudgeModal();
         } else if (e.key === 'ArrowLeft' && lightbox && lightbox.classList.contains('show')) {
             if (currentCertIndex > 0) openLightbox(currentCertIndex - 1);
             else openLightbox(certCards.length - 1);
@@ -145,6 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const lightboxBackdrop = document.getElementById('cert-lightbox-backdrop');
     const lightboxPrev = document.getElementById('cert-lightbox-prev');
     const lightboxNext = document.getElementById('cert-lightbox-next');
+    const lightboxVerifyBtn = document.getElementById('cert-lightbox-verify-btn');
 
     let currentCertIndex = -1;
 
@@ -158,6 +162,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const issuer = card.getAttribute('data-issuer');
         const category = card.getAttribute('data-category');
         const tags = (card.getAttribute('data-tags') || '').split(',').filter(Boolean);
+        const verifyUrl = card.getAttribute('data-verify');
+        const certId = card.getAttribute('data-certid');
 
         if (lightboxImg) lightboxImg.src = img;
         if (lightboxTitle) lightboxTitle.textContent = title;
@@ -169,6 +175,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (lightboxTags) {
             lightboxTags.innerHTML = tags.map(t => `<span class="cert-lightbox-tag">${t.trim()}</span>`).join('');
+        }
+
+        if (lightboxVerifyBtn) {
+            if (verifyUrl) {
+                lightboxVerifyBtn.href = verifyUrl;
+                lightboxVerifyBtn.style.display = 'inline-flex';
+                lightboxVerifyBtn.title = certId ? `Verify Credential (ID: ${certId})` : 'Verify Credential';
+            } else {
+                lightboxVerifyBtn.style.display = 'none';
+            }
         }
 
         if (lightbox) {
@@ -246,5 +262,84 @@ document.addEventListener('DOMContentLoaded', () => {
         el.style.transform = 'translateY(25px)';
         el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out, border-color 0.3s ease';
         cardObserver.observe(el);
+    });
+
+    // ==========================================================================
+    // 60-Second Judge View Modal Handling
+    // ==========================================================================
+    const judgeModal = document.getElementById('judge-view-modal');
+    const judgeCloseBtn = document.getElementById('judge-modal-close');
+    const judgeBackdrop = document.getElementById('judge-modal-backdrop');
+    const navJudgeBtn = document.getElementById('nav-judge-btn');
+    const heroJudgeBtn = document.getElementById('hero-judge-btn');
+    const floatJudgeBtn = document.getElementById('float-judge-btn');
+    const judgeQuickJumps = document.querySelectorAll('.judge-quick-jump-btn');
+
+    function openJudgeModal(targetCardId = null) {
+        if (!judgeModal) return;
+        judgeModal.classList.add('show');
+        judgeModal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+
+        if (targetCardId) {
+            setTimeout(() => {
+                const targetCard = document.getElementById(targetCardId);
+                if (targetCard) {
+                    targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    targetCard.style.outline = '2px solid #6cff52';
+                    setTimeout(() => { targetCard.style.outline = ''; }, 2200);
+                }
+            }, 120);
+        }
+    }
+
+    function closeJudgeModal() {
+        if (!judgeModal) return;
+        judgeModal.classList.remove('show');
+        judgeModal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+    }
+
+    function toggleJudgeModal() {
+        if (judgeModal && judgeModal.classList.contains('show')) {
+            closeJudgeModal();
+        } else {
+            openJudgeModal();
+        }
+    }
+
+    if (navJudgeBtn) navJudgeBtn.addEventListener('click', () => openJudgeModal());
+    if (heroJudgeBtn) heroJudgeBtn.addEventListener('click', () => openJudgeModal());
+    if (floatJudgeBtn) floatJudgeBtn.addEventListener('click', () => openJudgeModal());
+    if (judgeCloseBtn) judgeCloseBtn.addEventListener('click', closeJudgeModal);
+    if (judgeBackdrop) judgeBackdrop.addEventListener('click', closeJudgeModal);
+
+    judgeQuickJumps.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const jumpTarget = btn.getAttribute('data-jump');
+            openJudgeModal(jumpTarget);
+        });
+    });
+
+    // ==========================================================================
+    // In-Card Live Frame Reload Handlers
+    // ==========================================================================
+    const reloadBtns = document.querySelectorAll('.chrome-reload-btn');
+    reloadBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = btn.getAttribute('data-target');
+            const iframe = document.getElementById(targetId);
+            if (iframe) {
+                const currentSrc = iframe.src;
+                iframe.src = '';
+                btn.style.transform = 'rotate(360deg)';
+                btn.style.transition = 'transform 0.5s ease';
+                setTimeout(() => {
+                    iframe.src = currentSrc;
+                    btn.style.transform = 'none';
+                }, 200);
+            }
+        });
     });
 });
