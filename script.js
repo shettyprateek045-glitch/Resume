@@ -273,28 +273,40 @@ document.addEventListener('DOMContentLoaded', () => {
     const navJudgeBtn = document.getElementById('nav-judge-btn');
     const heroJudgeBtn = document.getElementById('hero-judge-btn');
     const floatJudgeBtn = document.getElementById('float-judge-btn');
+    const menuJudgeBtn = document.getElementById('menu-judge-btn');
     const judgeQuickJumps = document.querySelectorAll('.judge-quick-jump-btn');
+    const judgeSheet = judgeModal ? judgeModal.querySelector('.judge-modal-sheet') : null;
+
+    let isJudgeOpening = false;
 
     function openJudgeModal(targetCardId = null) {
         if (!judgeModal) return;
+        isJudgeOpening = true;
         judgeModal.classList.add('show');
         judgeModal.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
 
-        if (targetCardId) {
+        setTimeout(() => {
+            isJudgeOpening = false;
+        }, 350);
+
+        if (targetCardId && judgeSheet) {
             setTimeout(() => {
                 const targetCard = document.getElementById(targetCardId);
                 if (targetCard) {
-                    targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    judgeSheet.scrollTo({
+                        top: targetCard.offsetTop - 20,
+                        behavior: 'smooth'
+                    });
                     targetCard.style.outline = '2px solid #6cff52';
                     setTimeout(() => { targetCard.style.outline = ''; }, 2200);
                 }
-            }, 120);
+            }, 150);
         }
     }
 
     function closeJudgeModal() {
-        if (!judgeModal) return;
+        if (!judgeModal || isJudgeOpening) return;
         judgeModal.classList.remove('show');
         judgeModal.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
@@ -308,14 +320,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    if (navJudgeBtn) navJudgeBtn.addEventListener('click', () => openJudgeModal());
-    if (heroJudgeBtn) heroJudgeBtn.addEventListener('click', () => openJudgeModal());
-    if (floatJudgeBtn) floatJudgeBtn.addEventListener('click', () => openJudgeModal());
-    if (judgeCloseBtn) judgeCloseBtn.addEventListener('click', closeJudgeModal);
-    if (judgeBackdrop) judgeBackdrop.addEventListener('click', closeJudgeModal);
+    if (navJudgeBtn) navJudgeBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); openJudgeModal(); });
+    if (heroJudgeBtn) heroJudgeBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); openJudgeModal(); });
+    if (floatJudgeBtn) floatJudgeBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); openJudgeModal(); });
+    if (judgeCloseBtn) judgeCloseBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); closeJudgeModal(); });
+    if (judgeBackdrop) judgeBackdrop.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); closeJudgeModal(); });
+
+    if (judgeSheet) {
+        judgeSheet.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+    }
+
+    if (menuJudgeBtn) {
+        menuJudgeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (menu) menu.classList.remove('bx-x');
+            if (navLinks) navLinks.classList.remove('active');
+            openJudgeModal();
+        });
+    }
 
     judgeQuickJumps.forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
             const jumpTarget = btn.getAttribute('data-jump');
             openJudgeModal(jumpTarget);
         });
