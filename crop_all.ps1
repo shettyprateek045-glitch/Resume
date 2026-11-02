@@ -102,7 +102,7 @@ $crops = @(
     @{
         Source = "WhatsApp Image 2026-11-02 at 6.30.56 PM (1).jpeg"
         Target = "course-infosys-c-programming.jpg"
-        X = 12; Y = 280; W = 672; H = 315
+        X = 12; Y = 480; W = 670; H = 474
     },
     @{
         Source = "WhatsApp Image 2026-11-02 at 6.30.55 PM.jpeg"

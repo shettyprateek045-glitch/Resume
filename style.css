@@ -576,6 +576,33 @@ section {
     gap: 2em;
 }
 
+/* Ensure featured live prototype cards span full grid width to eliminate orphan gaps */
+.services-container .featured-box {
+    grid-column: 1 / -1;
+}
+
+/* Balance standard project cards across responsive breakpoints */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .services-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Project 3 spans full width in 2-column mode to avoid leaving an empty right column */
+    .services-container .box:nth-child(3):not(.featured-box) {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (min-width: 1024px) {
+    .services-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .services-container .box:nth-child(3):not(.featured-box) {
+        grid-column: auto;
+    }
+}
+
 .box {
     background: var(--card-background);
     border: 2px solid var(--card-border);
