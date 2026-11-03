@@ -100,10 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Escape') {
             closeModal();
             closeLightbox();
-            closeJudgeModal();
             document.querySelectorAll('.sim-qr-overlay.show').forEach(el => el.classList.remove('show'));
-        } else if ((e.key === 'j' || e.key === 'J') && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
-            toggleJudgeModal();
         } else if (e.key === 'ArrowLeft' && lightbox && lightbox.classList.contains('show')) {
             if (currentCertIndex > 0) openLightbox(currentCertIndex - 1);
             else openLightbox(certCards.length - 1);
@@ -280,93 +277,6 @@ document.addEventListener('DOMContentLoaded', () => {
         el.style.transform = 'translateY(25px)';
         el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out, border-color 0.3s ease';
         cardObserver.observe(el);
-    });
-
-    // ==========================================================================
-    // 60-Second Judge View Modal Handling
-    // ==========================================================================
-    const judgeModal = document.getElementById('judge-view-modal');
-    const judgeCloseBtn = document.getElementById('judge-modal-close');
-    const judgeBackdrop = document.getElementById('judge-modal-backdrop');
-    const navJudgeBtn = document.getElementById('nav-judge-btn');
-    const heroJudgeBtn = document.getElementById('hero-judge-btn');
-    const floatJudgeBtn = document.getElementById('float-judge-btn');
-    const menuJudgeBtn = document.getElementById('menu-judge-btn');
-    const judgeQuickJumps = document.querySelectorAll('.judge-quick-jump-btn');
-    const judgeSheet = judgeModal ? judgeModal.querySelector('.judge-modal-sheet') : null;
-
-    let isJudgeOpening = false;
-
-    function openJudgeModal(targetCardId = null) {
-        if (!judgeModal) return;
-        isJudgeOpening = true;
-        judgeModal.classList.add('show');
-        judgeModal.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
-
-        setTimeout(() => {
-            isJudgeOpening = false;
-        }, 350);
-
-        if (targetCardId && judgeSheet) {
-            setTimeout(() => {
-                const targetCard = document.getElementById(targetCardId);
-                if (targetCard) {
-                    judgeSheet.scrollTo({
-                        top: targetCard.offsetTop - 20,
-                        behavior: 'smooth'
-                    });
-                    targetCard.style.outline = '2px solid #6cff52';
-                    setTimeout(() => { targetCard.style.outline = ''; }, 2200);
-                }
-            }, 150);
-        }
-    }
-
-    function closeJudgeModal() {
-        if (!judgeModal || isJudgeOpening) return;
-        judgeModal.classList.remove('show');
-        judgeModal.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-    }
-
-    function toggleJudgeModal() {
-        if (judgeModal && judgeModal.classList.contains('show')) {
-            closeJudgeModal();
-        } else {
-            openJudgeModal();
-        }
-    }
-
-    if (navJudgeBtn) navJudgeBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); openJudgeModal(); });
-    if (heroJudgeBtn) heroJudgeBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); openJudgeModal(); });
-    if (floatJudgeBtn) floatJudgeBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); openJudgeModal(); });
-    if (judgeCloseBtn) judgeCloseBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); closeJudgeModal(); });
-    if (judgeBackdrop) judgeBackdrop.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); closeJudgeModal(); });
-
-    if (judgeSheet) {
-        judgeSheet.addEventListener('click', (e) => {
-            e.stopPropagation();
-        });
-    }
-
-    if (menuJudgeBtn) {
-        menuJudgeBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            if (menu) menu.classList.remove('bx-x');
-            if (navLinks) navLinks.classList.remove('active');
-            openJudgeModal();
-        });
-    }
-
-    judgeQuickJumps.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            const jumpTarget = btn.getAttribute('data-jump');
-            openJudgeModal(jumpTarget);
-        });
     });
 
     // ==========================================================================
