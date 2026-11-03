@@ -101,6 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
             closeModal();
             closeLightbox();
             closeJudgeModal();
+            document.querySelectorAll('.sim-qr-overlay.show').forEach(el => el.classList.remove('show'));
         } else if ((e.key === 'j' || e.key === 'J') && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
             toggleJudgeModal();
         } else if (e.key === 'ArrowLeft' && lightbox && lightbox.classList.contains('show')) {
@@ -352,23 +353,73 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================================================
-    // In-Card Live Frame Reload Handlers
+    // In-Card Live Frame Reload & Simulator Handlers
     // ==========================================================================
     const reloadBtns = document.querySelectorAll('.chrome-reload-btn');
     reloadBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
+            btn.style.transform = 'rotate(360deg)';
+            btn.style.transition = 'transform 0.5s ease';
+
             const targetId = btn.getAttribute('data-target');
-            const iframe = document.getElementById(targetId);
-            if (iframe) {
-                const currentSrc = iframe.src;
-                iframe.src = '';
-                btn.style.transform = 'rotate(360deg)';
-                btn.style.transition = 'transform 0.5s ease';
-                setTimeout(() => {
-                    iframe.src = currentSrc;
-                    btn.style.transform = 'none';
-                }, 200);
+            const targetEl = document.getElementById(targetId);
+
+            if (targetEl) {
+                if (targetEl.tagName === 'IFRAME') {
+                    const currentSrc = targetEl.src;
+                    targetEl.src = '';
+                    setTimeout(() => {
+                        targetEl.src = currentSrc;
+                        btn.style.transform = 'none';
+                    }, 200);
+                } else {
+                    targetEl.style.opacity = '0.35';
+                    targetEl.style.filter = 'blur(2px)';
+                    setTimeout(() => {
+                        targetEl.style.transition = 'opacity 0.4s ease, filter 0.4s ease';
+                        targetEl.style.opacity = '1';
+                        targetEl.style.filter = 'none';
+                        btn.style.transform = 'none';
+                    }, 300);
+                }
+            } else {
+                setTimeout(() => { btn.style.transform = 'none'; }, 500);
+            }
+        });
+    });
+
+    // In-Card QR Code Popover Toggle
+    const qrToggleBtns = document.querySelectorAll('.sim-qr-toggle-btn');
+    qrToggleBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const qrId = btn.getAttribute('data-qr');
+            const overlay = document.getElementById(qrId);
+            if (overlay) {
+                overlay.classList.toggle('show');
+            }
+        });
+    });
+
+    const qrCloseBtns = document.querySelectorAll('.sim-qr-close');
+    qrCloseBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const qrId = btn.getAttribute('data-close');
+            const overlay = document.getElementById(qrId);
+            if (overlay) overlay.classList.remove('show');
+        });
+    });
+
+    // Close QR overlays when clicking backdrop
+    const qrOverlays = document.querySelectorAll('.sim-qr-overlay');
+    qrOverlays.forEach(overlay => {
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                overlay.classList.remove('show');
             }
         });
     });

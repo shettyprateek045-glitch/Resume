@@ -1883,10 +1883,12 @@ footer {
 
 .preview-frame-container {
     width: 100%;
-    height: 440px;
-    background: #090909 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M0 0h40v40H0V0zm1 1h38v38H1V1z' fill='%23ffffff' fill-opacity='0.02'/%3E%3C/svg%3E");
+    min-height: 410px;
+    background: #090909;
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 .preview-frame-container iframe {
@@ -1895,6 +1897,417 @@ footer {
     border: none;
     display: block;
     background: #111;
+}
+
+/* Prototype Interactive Simulator Window */
+.prototype-sim-screen {
+    width: 100%;
+    height: 100%;
+    min-height: 410px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.2em 1.4em;
+    background: linear-gradient(180deg, #101014 0%, #08080a 100%);
+    position: relative;
+    transition: opacity 0.3s ease;
+}
+
+/* Chrome Address link */
+a.chrome-address {
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+a.chrome-address:hover {
+    background: rgba(62, 197, 255, 0.12);
+    border-color: rgba(62, 197, 255, 0.35);
+}
+
+/* Simulator Header */
+.sim-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 0.9em;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    gap: 1em;
+    flex-wrap: wrap;
+}
+
+.sim-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.8em;
+}
+
+.sim-badge-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 9px;
+    background: rgba(62, 197, 255, 0.15);
+    border: 1px solid rgba(62, 197, 255, 0.35);
+    color: #3ec5ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35em;
+    flex-shrink: 0;
+}
+
+.sim-badge-icon.idp-icon {
+    background: rgba(108, 255, 82, 0.15);
+    border-color: rgba(108, 255, 82, 0.35);
+    color: #6cff52;
+}
+
+.sim-app-title {
+    font-size: 0.96em;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.3px;
+}
+
+.sim-app-sub {
+    font-size: 0.74em;
+    color: var(--text-muted);
+}
+
+.sim-lang-switch {
+    display: flex;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 3px 4px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sim-lang-switch .lang-pill {
+    font-size: 0.72em;
+    padding: 2px 10px;
+    border-radius: 14px;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.sim-lang-switch .lang-pill.active {
+    background: #3ec5ff;
+    color: #0b0b0f;
+}
+
+.sim-cluster-status {
+    font-size: 0.75em;
+    color: #6cff52;
+    background: rgba(108, 255, 82, 0.1);
+    border: 1px solid rgba(108, 255, 82, 0.3);
+    padding: 3px 10px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+}
+
+.cluster-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #6cff52;
+    box-shadow: 0 0 8px #6cff52;
+}
+
+/* Chat Simulator Body */
+.sim-chat-area {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85em;
+    margin: 1.1em 0;
+}
+
+.sim-msg {
+    display: flex;
+    gap: 0.75em;
+    align-items: flex-start;
+}
+
+.sim-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1em;
+    flex-shrink: 0;
+}
+
+.sim-avatar.ksp-ai-avatar {
+    background: rgba(62, 197, 255, 0.2);
+    border-color: #3ec5ff;
+    color: #3ec5ff;
+}
+
+.sim-bubble {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 0.75em 1em;
+    border-radius: 10px;
+    flex: 1;
+}
+
+.sim-msg.ai-msg .sim-bubble {
+    background: rgba(62, 197, 255, 0.05);
+    border-color: rgba(62, 197, 255, 0.25);
+}
+
+.sim-role {
+    font-size: 0.7em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #3ec5ff;
+    margin-bottom: 0.3em;
+}
+
+.officer-msg .sim-role {
+    color: #ffbd2e;
+}
+
+.sim-bubble p {
+    font-size: 0.84em;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.45;
+    margin: 0;
+}
+
+.sim-feature-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 0.65em;
+}
+
+.sim-feature-chips .chip {
+    font-size: 0.72em;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.85);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.sim-feature-chips .chip i {
+    color: #6cff52;
+}
+
+/* Domain Grid Simulator Body for IDP */
+.sim-domain-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.8em;
+    margin: 1em 0;
+}
+
+.sim-domain-tile {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 9px;
+    padding: 0.85em;
+    transition: all 0.25s ease;
+}
+
+.sim-domain-tile.active {
+    background: rgba(108, 255, 82, 0.05);
+    border-color: rgba(108, 255, 82, 0.3);
+}
+
+.sim-domain-tile .tile-head {
+    font-size: 0.82em;
+    font-weight: 700;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 0.35em;
+}
+
+.sim-domain-tile .tile-head i {
+    color: #6cff52;
+    font-size: 1.15em;
+}
+
+.sim-domain-tile .tile-metric {
+    font-size: 0.75em;
+    color: #3ec5ff;
+    font-family: monospace;
+    font-weight: 600;
+    margin-bottom: 0.3em;
+}
+
+.sim-domain-tile p {
+    font-size: 0.74em;
+    color: var(--text-muted);
+    line-height: 1.35;
+    margin: 0;
+}
+
+/* Launch Action Strip inside Card */
+.sim-action-strip {
+    display: flex;
+    align-items: center;
+    gap: 0.75em;
+    margin-top: auto;
+    padding-top: 0.9em;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sim-launch-btn {
+    flex: 1;
+    background: linear-gradient(135deg, #3ec5ff 0%, #0088ff 100%);
+    color: #0b0b0f;
+    font-weight: 700;
+    font-size: 0.86em;
+    padding: 0.65em 1.2em;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55em;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 15px rgba(62, 197, 255, 0.3);
+}
+
+#project-idp .sim-launch-btn {
+    background: linear-gradient(135deg, #6cff52 0%, #00c853 100%);
+    box-shadow: 0 4px 15px rgba(108, 255, 82, 0.3);
+}
+
+.sim-launch-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(62, 197, 255, 0.5);
+    color: #000;
+}
+
+#project-idp .sim-launch-btn:hover {
+    box-shadow: 0 6px 20px rgba(108, 255, 82, 0.5);
+}
+
+.sim-qr-toggle-btn {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: #ffffff;
+    font-size: 0.82em;
+    font-weight: 600;
+    padding: 0.65em 1em;
+    border-radius: 8px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    transition: all 0.2s ease;
+}
+
+.sim-qr-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: #3ec5ff;
+    color: #3ec5ff;
+}
+
+/* Hidden Phone QR Overlay */
+.sim-qr-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(8, 8, 12, 0.94);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5em;
+    z-index: 10;
+    animation: fadeIn 0.25s ease;
+}
+
+.sim-qr-overlay.show {
+    display: flex;
+}
+
+.sim-qr-card {
+    background: #141418;
+    border: 1.5px solid rgba(62, 197, 255, 0.35);
+    border-radius: 12px;
+    padding: 1.2em 1.6em;
+    text-align: center;
+    position: relative;
+    max-width: 280px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+}
+
+.sim-qr-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #fff;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1em;
+}
+
+.sim-qr-close:hover {
+    background: #e74c3c;
+    border-color: #e74c3c;
+}
+
+.sim-qr-card img {
+    width: 140px;
+    height: 140px;
+    margin: 0.4em auto 0.6em;
+    display: block;
+    background: #fff;
+    padding: 6px;
+    border-radius: 8px;
+}
+
+.sim-qr-card p {
+    font-size: 0.76em;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 0.4em;
+}
+
+.sim-qr-card .qr-url-text {
+    font-size: 0.72em;
+    color: #3ec5ff;
+    font-family: monospace;
+    display: block;
+    word-break: break-all;
+}
+
+@media (max-width: 768px) {
+    .sim-domain-grid {
+        grid-template-columns: 1fr;
+    }
+    .sim-action-strip {
+        flex-direction: column;
+    }
+    .sim-launch-btn,
+    .sim-qr-toggle-btn {
+        width: 100%;
+    }
 }
 
 .project-action {

@@ -308,29 +308,88 @@
                 </div>
 
                 <!-- In-Card Live Interactive Preview for Judges -->
-                <div class="card-live-preview">
+                <div class="card-live-preview" id="ksp-live-preview">
                     <div class="preview-chrome-bar">
                         <div class="chrome-dots">
                             <span class="dot dot-red"></span>
                             <span class="dot dot-yellow"></span>
                             <span class="dot dot-green"></span>
                         </div>
-                        <div class="chrome-address">
+                        <a href="https://datathon-1-ofokflbj.onslate.in" target="_blank" rel="noopener noreferrer" class="chrome-address" title="Click to open https://datathon-1-ofokflbj.onslate.in in new tab">
                             <i class='bx bx-lock-alt'></i>
-                            <span class="chrome-url-text">datathon-1-ofokflbj.onslate.in</span>
-                            <span class="chrome-live-tag">LIVE DEMO</span>
-                        </div>
+                            <span class="chrome-url-text">https://datathon-1-ofokflbj.onslate.in</span>
+                            <span class="chrome-live-tag"><span class="pulse-dot"></span> LIVE WEB APP</span>
+                        </a>
                         <div class="chrome-actions">
-                            <button type="button" class="chrome-btn chrome-reload-btn" data-target="ksp-preview-frame" title="Reload Live Frame">
+                            <button type="button" class="chrome-btn chrome-reload-btn" data-target="ksp-sim-screen" title="Refresh Live Simulator">
                                 <i class='bx bx-refresh'></i>
                             </button>
-                            <a href="https://datathon-1-ofokflbj.onslate.in" target="_blank" rel="noopener noreferrer" class="chrome-btn chrome-external-btn" title="Open Fullscreen in New Tab">
+                            <a href="https://datathon-1-ofokflbj.onslate.in" target="_blank" rel="noopener noreferrer" class="chrome-btn chrome-external-btn" title="Launch Fullscreen on Onslate">
                                 <i class='bx bx-link-external'></i>
                             </a>
                         </div>
                     </div>
-                    <div class="preview-frame-container">
-                        <iframe id="ksp-preview-frame" src="https://datathon-1-ofokflbj.onslate.in" title="KSP Sahayak Live Prototype" loading="lazy" allow="microphone; geolocation; clipboard-write"></iframe>
+                    <div class="preview-frame-container" id="ksp-sim-screen">
+                        <div class="prototype-sim-screen">
+                            <!-- Simulated Prototype UI Header -->
+                            <div class="sim-header">
+                                <div class="sim-brand">
+                                    <div class="sim-badge-icon"><i class='bx bx-shield-quarter'></i></div>
+                                    <div>
+                                        <div class="sim-app-title">KSP Sahayak · Copilot Prototype</div>
+                                        <div class="sim-app-sub">Karnataka State Police Datathon 2026 · Zoho Catalyst & Onslate</div>
+                                    </div>
+                                </div>
+                                <div class="sim-lang-switch">
+                                    <span class="lang-pill active">English</span>
+                                    <span class="lang-pill">ಕನ್ನಡ</span>
+                                </div>
+                            </div>
+
+                            <!-- Simulated Interactive Query/Response Body -->
+                            <div class="sim-chat-area">
+                                <div class="sim-msg officer-msg">
+                                    <div class="sim-avatar"><i class='bx bx-user-check'></i></div>
+                                    <div class="sim-bubble">
+                                        <div class="sim-role">Investigating Officer (Voice Input 🎙️)</div>
+                                        <p>"Retrieve crime incident frequency for Bengaluru Central Ward and project live GPS hotspot clusters."</p>
+                                    </div>
+                                </div>
+
+                                <div class="sim-msg ai-msg">
+                                    <div class="sim-avatar ksp-ai-avatar"><i class='bx bx-bot'></i></div>
+                                    <div class="sim-bubble">
+                                        <div class="sim-role">KSP Sahayak Engine · Instant Synthesis</div>
+                                        <p>Indexed <strong>14 incidents (past 24h)</strong> across Central Bengaluru. High-density cluster detected around Gandhinagar. Tamper-evident session hash logged.</p>
+                                        <div class="sim-feature-chips">
+                                            <span class="chip"><i class='bx bx-map-pin'></i> GPS Heatmap Layer: Active</span>
+                                            <span class="chip"><i class='bx bx-file'></i> FIR Digest PDF: Auto-Generated</span>
+                                            <span class="chip"><i class='bx bx-volume-full'></i> Kannada Audio: Ready</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Live Launch CTA Strip inside Card -->
+                            <div class="sim-action-strip">
+                                <a href="https://datathon-1-ofokflbj.onslate.in" target="_blank" rel="noopener noreferrer" class="sim-launch-btn">
+                                    <i class='bx bx-rocket'></i> <span>Launch Live Prototype App (Full Screen)</span> <i class='bx bx-link-external'></i>
+                                </a>
+                                <button type="button" class="sim-qr-toggle-btn" data-qr="ksp-qr-overlay">
+                                    <i class='bx bx-qr'></i> <span>Scan on Phone</span>
+                                </button>
+                            </div>
+
+                            <!-- Hidden Phone QR Overlay -->
+                            <div class="sim-qr-overlay" id="ksp-qr-overlay">
+                                <div class="sim-qr-card">
+                                    <button type="button" class="sim-qr-close" data-close="ksp-qr-overlay"><i class='bx bx-x'></i></button>
+                                    <img src="qr/qr-ksp.svg" alt="Scan to test KSP Sahayak on mobile" loading="lazy">
+                                    <p>Point phone camera to test live on mobile device</p>
+                                    <span class="qr-url-text">datathon-1-ofokflbj.onslate.in</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -359,29 +418,82 @@
                 </div>
 
                 <!-- In-Card Live Interactive Preview for Judges -->
-                <div class="card-live-preview">
+                <div class="card-live-preview" id="idp-live-preview">
                     <div class="preview-chrome-bar">
                         <div class="chrome-dots">
                             <span class="dot dot-red"></span>
                             <span class="dot dot-yellow"></span>
                             <span class="dot dot-green"></span>
                         </div>
-                        <div class="chrome-address">
+                        <a href="https://multi-domain-tech-fo-wkelilzm.onslate.in/" target="_blank" rel="noopener noreferrer" class="chrome-address" title="Click to open https://multi-domain-tech-fo-wkelilzm.onslate.in/ in new tab">
                             <i class='bx bx-lock-alt'></i>
-                            <span class="chrome-url-text">multi-domain-tech-fo-wkelilzm.onslate.in</span>
-                            <span class="chrome-live-tag">LIVE DEMO</span>
-                        </div>
+                            <span class="chrome-url-text">https://multi-domain-tech-fo-wkelilzm.onslate.in/</span>
+                            <span class="chrome-live-tag"><span class="pulse-dot"></span> LIVE WEB APP</span>
+                        </a>
                         <div class="chrome-actions">
-                            <button type="button" class="chrome-btn chrome-reload-btn" data-target="idp-preview-frame" title="Reload Live Frame">
+                            <button type="button" class="chrome-btn chrome-reload-btn" data-target="idp-sim-screen" title="Reload Live Simulator">
                                 <i class='bx bx-refresh'></i>
                             </button>
-                            <a href="https://multi-domain-tech-fo-wkelilzm.onslate.in/" target="_blank" rel="noopener noreferrer" class="chrome-btn chrome-external-btn" title="Open Fullscreen in New Tab">
+                            <a href="https://multi-domain-tech-fo-wkelilzm.onslate.in/" target="_blank" rel="noopener noreferrer" class="chrome-btn chrome-external-btn" title="Launch Fullscreen on Onslate">
                                 <i class='bx bx-link-external'></i>
                             </a>
                         </div>
                     </div>
-                    <div class="preview-frame-container">
-                        <iframe id="idp-preview-frame" src="https://multi-domain-tech-fo-wkelilzm.onslate.in/" title="IDP Tech Platform Live Prototype" loading="lazy" allow="clipboard-write"></iframe>
+                    <div class="preview-frame-container" id="idp-sim-screen">
+                        <div class="prototype-sim-screen">
+                            <!-- Simulated Prototype UI Header -->
+                            <div class="sim-header">
+                                <div class="sim-brand">
+                                    <div class="sim-badge-icon idp-icon"><i class='bx bx-network-chart'></i></div>
+                                    <div>
+                                        <div class="sim-app-title">IDP · Multi-Domain Technology Orchestrator</div>
+                                        <div class="sim-app-sub">Next-Generation Engineering Portal · Live Cloud Cluster on Onslate</div>
+                                    </div>
+                                </div>
+                                <div class="sim-cluster-status">
+                                    <span class="cluster-dot"></span> Cluster Online (99.8% Uptime)
+                                </div>
+                            </div>
+
+                            <!-- Simulated Interactive Domain Matrix -->
+                            <div class="sim-domain-grid">
+                                <div class="sim-domain-tile active">
+                                    <div class="tile-head"><i class='bx bx-brain'></i> AI & Computer Vision</div>
+                                    <div class="tile-metric">TensorRT · 42 FPS</div>
+                                    <p>Real-time edge telemetry with Jetson Orin Nano hardware acceleration pipeline.</p>
+                                </div>
+                                <div class="sim-domain-tile">
+                                    <div class="tile-head"><i class='bx bx-cloud'></i> Cloud Interop Services</div>
+                                    <div class="tile-metric">API Latency: 18ms</div>
+                                    <p>Decoupled microservice architecture with automated request routing & cache layer.</p>
+                                </div>
+                                <div class="sim-domain-tile">
+                                    <div class="tile-head"><i class='bx bx-code-block'></i> Code Evaluation Sandbox</div>
+                                    <div class="tile-metric">28 Submissions Tracked</div>
+                                    <p>Automated grading harness, test-case verification & live candidate score matrix.</p>
+                                </div>
+                            </div>
+
+                            <!-- Live Launch CTA Strip inside Card -->
+                            <div class="sim-action-strip">
+                                <a href="https://multi-domain-tech-fo-wkelilzm.onslate.in/" target="_blank" rel="noopener noreferrer" class="sim-launch-btn">
+                                    <i class='bx bx-rocket'></i> <span>Launch Live Platform (Full Screen)</span> <i class='bx bx-link-external'></i>
+                                </a>
+                                <button type="button" class="sim-qr-toggle-btn" data-qr="idp-qr-overlay">
+                                    <i class='bx bx-qr'></i> <span>Scan on Phone</span>
+                                </button>
+                            </div>
+
+                            <!-- Hidden Phone QR Overlay -->
+                            <div class="sim-qr-overlay" id="idp-qr-overlay">
+                                <div class="sim-qr-card">
+                                    <button type="button" class="sim-qr-close" data-close="idp-qr-overlay"><i class='bx bx-x'></i></button>
+                                    <img src="qr/qr-idp.svg" alt="Scan to test IDP Platform on mobile" loading="lazy">
+                                    <p>Point phone camera to test live on mobile device</p>
+                                    <span class="qr-url-text">multi-domain-tech-fo-wkelilzm.onslate.in</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
