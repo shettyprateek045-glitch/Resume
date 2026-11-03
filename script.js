@@ -472,4 +472,247 @@ document.addEventListener('DOMContentLoaded', () => {
         cardObserver.observe(el);
     });
 
+
+    // ==========================================================================
+    // 13. AQUAVISION INTERACTIVE YOLOv8 LIVE CONSOLE ENGINE
+    // ==========================================================================
+    const aquaScene = document.getElementById('aqua-scene');
+    const aquaScanner = document.getElementById('aqua-scanner');
+    const aquaBboxesWrapper = document.getElementById('aqua-bboxes');
+    const aquaConfRange = document.getElementById('aqua-conf-range');
+    const aquaConfDisplay = document.getElementById('aqua-conf-display');
+    const aquaDetCount = document.getElementById('aqua-det-count');
+    const aquaFpsReadout = document.getElementById('aqua-fps-readout');
+    const aquaRunInferenceBtn = document.getElementById('aqua-run-inference-btn');
+    const aquaScanTrigger = document.getElementById('aqua-scan-trigger');
+    const aquaSampleBtns = document.querySelectorAll('.sample-btn');
+    const aquaFileInput = document.getElementById('aqua-file-input');
+
+    const sampleData = {
+        species: [
+            { label: 'Marine Species (Fish)', conf: 94.2, top: '22%', left: '16%', width: '44%', height: '38%', type: 'bbox-marine' },
+            { label: 'Coral Structure', conf: 89.4, top: '60%', left: '52%', width: '34%', height: '30%', type: 'bbox-marine' },
+            { label: 'Submerged Debris (Canister)', conf: 86.1, top: '68%', left: '12%', width: '28%', height: '22%', type: 'bbox-debris' }
+        ],
+        debris: [
+            { label: 'Submerged Plastic (Bottle)', conf: 96.3, top: '26%', left: '22%', width: '32%', height: '44%', type: 'bbox-debris' },
+            { label: 'Discarded Net / Gear', conf: 91.5, top: '56%', left: '56%', width: '36%', height: '34%', type: 'bbox-debris' },
+            { label: 'Metallic Canister', conf: 87.8, top: '16%', left: '60%', width: '26%', height: '28%', type: 'bbox-debris' },
+            { label: 'Micro-fragment Clustered', conf: 83.2, top: '70%', left: '10%', width: '22%', height: '20%', type: 'bbox-debris' }
+        ],
+        turtle: [
+            { label: 'Pelagic Sea Turtle (Cheloniidae)', conf: 95.8, top: '24%', left: '18%', width: '56%', height: '46%', type: 'bbox-marine' },
+            { label: 'Reef Formation Structure', conf: 92.1, top: '64%', left: '8%', width: '82%', height: '28%', type: 'bbox-marine' },
+            { label: 'Particulate Backscatter', conf: 81.4, top: '12%', left: '10%', width: '30%', height: '20%', type: 'bbox-debris' }
+        ],
+        custom: [
+            { label: 'Identified Marine Biomass', conf: 93.5, top: '28%', left: '20%', width: '45%', height: '40%', type: 'bbox-marine' },
+            { label: 'Aquatic Object Region', conf: 88.0, top: '55%', left: '48%', width: '36%', height: '32%', type: 'bbox-debris' }
+        ]
+    };
+
+    let currentSampleKey = 'species';
+
+    function renderAquaBboxes(sampleKey) {
+        if (!aquaBboxesWrapper) return;
+        const boxes = sampleData[sampleKey] || sampleData.species;
+        const currentThresh = aquaConfRange ? parseInt(aquaConfRange.value, 10) : 50;
+        
+        aquaBboxesWrapper.innerHTML = '';
+        let visibleCount = 0;
+
+        boxes.forEach(b => {
+            const bboxEl = document.createElement('div');
+            bboxEl.className = `bbox ${b.type}`;
+            bboxEl.setAttribute('data-conf', Math.round(b.conf));
+            bboxEl.style.top = b.top;
+            bboxEl.style.left = b.left;
+            bboxEl.style.width = b.width;
+            bboxEl.style.height = b.height;
+
+            if (b.conf < currentThresh) {
+                bboxEl.classList.add('hidden');
+            } else {
+                visibleCount++;
+            }
+
+            bboxEl.innerHTML = `
+                <span class="bbox-label">${b.label} ${b.conf}%</span>
+                <div class="bbox-box"></div>
+            `;
+            aquaBboxesWrapper.appendChild(bboxEl);
+        });
+
+        if (aquaDetCount) {
+            aquaDetCount.textContent = `Detections: ${visibleCount}`;
+        }
+    }
+
+    function triggerScanSweep() {
+        if (!aquaScanner) return;
+        aquaScanner.classList.remove('scanning');
+        // Force reflow
+        void aquaScanner.offsetWidth;
+        aquaScanner.classList.add('scanning');
+
+        // Randomize realistic inference latency
+        const lat = (Math.random() * 5 + 20).toFixed(1);
+        const fps = (1000 / lat).toFixed(1);
+        if (aquaFpsReadout) {
+            aquaFpsReadout.textContent = `FPS: ${fps} · LATENCY: ${lat}ms`;
+        }
+
+        setTimeout(() => {
+            renderAquaBboxes(currentSampleKey);
+        }, 550);
+    }
+
+    if (aquaSampleBtns.length > 0) {
+        aquaSampleBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                aquaSampleBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const sample = btn.getAttribute('data-sample');
+                currentSampleKey = sample;
+
+                // Remove any custom uploaded image if switching samples
+                const existingImg = aquaScene ? aquaScene.querySelector('.custom-uploaded-img') : null;
+                if (existingImg) existingImg.remove();
+
+                if (aquaScene) {
+                    aquaScene.className = `underwater-backdrop scene-${sample}`;
+                }
+
+                triggerScanSweep();
+            });
+        });
+    }
+
+    if (aquaConfRange && aquaConfDisplay) {
+        aquaConfRange.addEventListener('input', (e) => {
+            const val = e.target.value;
+            aquaConfDisplay.textContent = `${val}%`;
+
+            const bboxes = aquaBboxesWrapper ? aquaBboxesWrapper.querySelectorAll('.bbox') : [];
+            let visibleCount = 0;
+            bboxes.forEach(b => {
+                const conf = parseInt(b.getAttribute('data-conf'), 10);
+                if (conf < val) {
+                    b.classList.add('hidden');
+                } else {
+                    b.classList.remove('hidden');
+                    visibleCount++;
+                }
+            });
+
+            if (aquaDetCount) {
+                aquaDetCount.textContent = `Detections: ${visibleCount}`;
+            }
+        });
+    }
+
+    if (aquaRunInferenceBtn) {
+        aquaRunInferenceBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            triggerScanSweep();
+        });
+    }
+
+    if (aquaScanTrigger) {
+        aquaScanTrigger.addEventListener('click', (e) => {
+            e.preventDefault();
+            triggerScanSweep();
+        });
+    }
+
+    if (aquaFileInput) {
+        aquaFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                aquaSampleBtns.forEach(b => b.classList.remove('active'));
+                currentSampleKey = 'custom';
+
+                let img = aquaScene.querySelector('.custom-uploaded-img');
+                if (!img) {
+                    img = document.createElement('img');
+                    img.className = 'custom-uploaded-img';
+                    aquaScene.insertBefore(img, aquaScene.firstChild);
+                }
+                img.src = event.target.result;
+
+                triggerScanSweep();
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // ==========================================================================
+    // 14. KSP SAHAYAK BILINGUAL SIMULATOR INTERACTIVITY
+    // ==========================================================================
+    const kspSimScreen = document.getElementById('ksp-sim-screen');
+    if (kspSimScreen) {
+        const langPills = kspSimScreen.querySelectorAll('.sim-lang-switch .lang-pill');
+        const officerText = kspSimScreen.querySelector('.officer-msg p');
+        const aiText = kspSimScreen.querySelector('.ai-msg p');
+        const officerRole = kspSimScreen.querySelector('.officer-msg .sim-role');
+        const aiRole = kspSimScreen.querySelector('.ai-msg .sim-role');
+
+        const dialogues = {
+            en: {
+                officerRole: 'Investigating Officer (Voice Input 🎙️)',
+                officer: '"Retrieve crime incident frequency for Bengaluru Central Ward and project live GPS hotspot clusters."',
+                aiRole: 'KSP Sahayak Engine · Instant Synthesis',
+                ai: 'Indexed <strong>14 incidents (past 24h)</strong> across Central Bengaluru. High-density cluster detected around Gandhinagar precinct. Tamper-evident session hash logged.'
+            },
+            kn: {
+                officerRole: 'ತನಿಖಾಧಿಕಾರಿ (ಧ್ವನಿ ಇನ್‌ಪುಟ್ 🎙️)',
+                officer: '"ಬೆಂಗಳೂರು ಕೇಂದ್ರ ವಾರ್ಡ್‌ನ ಅಪರಾಧ ಘಟನೆಗಳ ಆವರ್ತನ ಪಡೆದುಕೊಳ್ಳಿ ಮತ್ತು ಲೈವ್ ಜಿಪಿಎಸ್ ಹಾಟ್‌ಸ್ಪಾಟ್‌ಗಳನ್ನು ತೋರಿಸಿ."',
+                aiRole: 'ಕೆಎಸ್‌ಪಿ ಸಹಾಯಕ ಇಂಜಿನ್ · ತತ್‌ಕ್ಷಣ ಸಾರಾಂಶ',
+                ai: 'ಕೇಂದ್ರ ಬೆಂಗಳೂರಿನಲ್ಲಿ ಕಳೆದ 24 ಗಂಟೆಗಳಲ್ಲಿ <strong>14 ಘಟನೆಗಳನ್ನು</strong> ಗುರುತಿಸಲಾಗಿದೆ. ಗಾಂಧಿನಗರ ವ್ಯಾಪ್ತಿಯಲ್ಲಿ ಹೆಚ್ಚಿನ ಸಾಂದ್ರತೆಯ ಕ್ಲಸ್ಟರ್ ಪತ್ತೆಯಾಗಿದೆ. ಎಫ್‌ಐಆರ್ ಸಾರಾಂಶ ಸಿದ್ಧವಾಗಿದೆ.'
+            }
+        };
+
+        langPills.forEach(pill => {
+            pill.addEventListener('click', () => {
+                langPills.forEach(p => p.classList.remove('active'));
+                pill.classList.add('active');
+
+                const isKn = pill.textContent.includes('ಕನ್ನಡ');
+                const d = isKn ? dialogues.kn : dialogues.en;
+
+                if (officerText) officerText.textContent = d.officer;
+                if (aiText) aiText.innerHTML = d.ai;
+                if (officerRole) officerRole.textContent = d.officerRole;
+                if (aiRole) aiRole.textContent = d.aiRole;
+            });
+        });
+    }
+
+    // ==========================================================================
+    // 15. IDP MULTI-DOMAIN PLATFORM INTERACTIVITY
+    // ==========================================================================
+    const idpSimScreen = document.getElementById('idp-sim-screen');
+    if (idpSimScreen) {
+        const domainTiles = idpSimScreen.querySelectorAll('.sim-domain-tile');
+        const clusterStatus = idpSimScreen.querySelector('.sim-cluster-status');
+
+        domainTiles.forEach(tile => {
+            tile.addEventListener('click', () => {
+                domainTiles.forEach(t => t.classList.remove('active'));
+                tile.classList.add('active');
+
+                const head = tile.querySelector('.tile-head');
+                const headText = head ? head.textContent.trim() : 'Service';
+
+                if (clusterStatus) {
+                    clusterStatus.innerHTML = `<span class="cluster-dot"></span> Active Domain: ${headText} · Online`;
+                }
+            });
+        });
+    }
+
 });
