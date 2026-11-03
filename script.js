@@ -1,9 +1,11 @@
 // ==========================================================================
 // Prateek Shetty - Portfolio Interactive Scripts
+// Theme: Premium Dark with Electric Blue & Violet Accents
 // ==========================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Mobile Navigation Toggle
+
+    // 1. Mobile Navigation Toggle
     const menu = document.querySelector("#menu");
     const navLinks = document.querySelector(".links");
 
@@ -22,13 +24,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Active Navigation Highlight on Scroll
+    // 2. Active Navigation Highlight on Scroll
     const sections = document.querySelectorAll('section');
     const navItems = document.querySelectorAll('nav ul.links li a');
 
     window.addEventListener('scroll', () => {
         let current = '';
-        const scrollPosition = window.pageYOffset + 250;
+        const scrollPosition = window.pageYOffset + 240;
 
         sections.forEach(section => {
             const sectionTop = section.offsetTop;
@@ -46,20 +48,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Contact Form & Modal Handling
+    // 3. Contact Form & Feedback Modal Handling
     const contactForm = document.getElementById('contact-form');
     const overlay = document.getElementById('overlay');
     const thankYouCard = document.getElementById('thank-you-card');
     const closeButton = document.getElementById('close-button');
 
-    function openModal() {
+    function openFeedbackModal() {
         if (overlay && thankYouCard) {
             overlay.classList.add('show');
             thankYouCard.classList.add('show');
         }
     }
 
-    function closeModal() {
+    function closeFeedbackModal() {
         if (overlay && thankYouCard) {
             overlay.classList.remove('show');
             thankYouCard.classList.remove('show');
@@ -80,40 +82,64 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Display success modal
-            openModal();
-
-            // Reset form fields
+            openFeedbackModal();
             contactForm.reset();
         });
     }
 
-    if (closeButton) {
-        closeButton.addEventListener('click', closeModal);
-    }
+    if (closeButton) closeButton.addEventListener('click', closeFeedbackModal);
+    if (overlay) overlay.addEventListener('click', closeFeedbackModal);
 
-    if (overlay) {
-        overlay.addEventListener('click', closeModal);
-    }
+    // 4. Video Introduction Modal Handling
+    const videoModal = document.getElementById('video-modal');
+    const videoModalClose = document.getElementById('video-modal-close');
+    const videoModalBackdrop = document.getElementById('video-modal-backdrop');
+    const openVideoBtn = document.getElementById('open-video-modal-btn');
+    const videoPreviewTrigger = document.getElementById('video-preview-trigger');
 
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            closeModal();
-            closeLightbox();
-            closeJudgeModal();
-            document.querySelectorAll('.sim-qr-overlay.show').forEach(el => el.classList.remove('show'));
-        } else if ((e.key === 'j' || e.key === 'J') && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
-            toggleJudgeModal();
-        } else if (e.key === 'ArrowLeft' && lightbox && lightbox.classList.contains('show')) {
-            if (currentCertIndex > 0) openLightbox(currentCertIndex - 1);
-            else openLightbox(certCards.length - 1);
-        } else if (e.key === 'ArrowRight' && lightbox && lightbox.classList.contains('show')) {
-            if (currentCertIndex < certCards.length - 1) openLightbox(currentCertIndex + 1);
-            else openLightbox(0);
+    function openVideoModal() {
+        if (videoModal) {
+            videoModal.classList.add('show');
+            videoModal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
         }
-    });
+    }
 
-    // Certificate Category Filtering
+    function closeVideoModal() {
+        if (videoModal) {
+            videoModal.classList.remove('show');
+            videoModal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+    }
+
+    if (openVideoBtn) openVideoBtn.addEventListener('click', (e) => { e.preventDefault(); openVideoModal(); });
+    if (videoPreviewTrigger) videoPreviewTrigger.addEventListener('click', (e) => { e.preventDefault(); openVideoModal(); });
+    if (videoModalClose) videoModalClose.addEventListener('click', closeVideoModal);
+    if (videoModalBackdrop) videoModalBackdrop.addEventListener('click', closeVideoModal);
+
+    // 5. Expandable Archive Toggle
+    const toggleArchiveBtn = document.getElementById('toggle-archive-btn');
+    const archiveContent = document.getElementById('archive-content');
+    const archiveBtnText = document.getElementById('archive-btn-text');
+    const archiveBtnIcon = document.getElementById('archive-btn-icon');
+
+    if (toggleArchiveBtn && archiveContent) {
+        toggleArchiveBtn.addEventListener('click', () => {
+            const isHidden = archiveContent.style.display === 'none' || archiveContent.style.display === '';
+            if (isHidden) {
+                archiveContent.style.display = 'block';
+                if (archiveBtnText) archiveBtnText.textContent = 'Collapse Credentials Archive (Showing 28 Verified Credentials)';
+                if (archiveBtnIcon) archiveBtnIcon.className = 'bx bx-chevron-up';
+            } else {
+                archiveContent.style.display = 'none';
+                if (archiveBtnText) archiveBtnText.textContent = 'Expand Complete Archive (All 28 Verified Credentials)';
+                if (archiveBtnIcon) archiveBtnIcon.className = 'bx bx-chevron-down';
+            }
+        });
+    }
+
+    // 6. Certificate Category Filtering (Inside Archive)
     const certTabs = document.querySelectorAll('.cert-tab-btn');
     const colHackathons = document.getElementById('col-hackathons');
     const colCourses = document.getElementById('col-courses');
@@ -137,8 +163,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Certificate Lightbox
-    const certCards = Array.from(document.querySelectorAll('.cert-item-card'));
+    // 7. Certificate Lightbox Modal Handling
+    const allCertCards = Array.from(document.querySelectorAll('.cert-item-card, .featured-cert-card, .intern-cert-card'));
     const lightbox = document.getElementById('cert-lightbox');
     const lightboxImg = document.getElementById('cert-lightbox-img');
     const lightboxTitle = document.getElementById('cert-lightbox-title');
@@ -153,10 +179,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentCertIndex = -1;
 
-    function openLightbox(index) {
-        if (index < 0 || index >= certCards.length) return;
+    function openLightboxWithCard(card, index) {
+        if (!card) return;
         currentCertIndex = index;
-        const card = certCards[index];
 
         const img = card.getAttribute('data-img');
         const title = card.getAttribute('data-title');
@@ -169,20 +194,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if (lightboxImg) lightboxImg.src = img;
         if (lightboxTitle) lightboxTitle.textContent = title;
         if (lightboxIssuer) lightboxIssuer.innerHTML = `<i class='bx bx-buildings'></i> ${issuer}`;
+        
         if (lightboxBadge) {
-            lightboxBadge.textContent = category === 'hackathon' ? '🏆 Hackathon Credential' : '📜 Certified Course';
-            lightboxBadge.style.color = category === 'hackathon' ? '#6cff52' : '#3ec5ff';
-            lightboxBadge.style.borderColor = category === 'hackathon' ? 'rgba(108,255,82,0.4)' : 'rgba(62,197,255,0.4)';
+            lightboxBadge.textContent = category === 'hackathon' ? '🏆 Hackathon Credential' : '📜 Verified Certification';
+            lightboxBadge.style.color = category === 'hackathon' ? '#eab308' : '#38bdf8';
+            lightboxBadge.style.borderColor = category === 'hackathon' ? 'rgba(234, 179, 8, 0.4)' : 'rgba(56, 189, 248, 0.4)';
         }
+
         if (lightboxTags) {
             lightboxTags.innerHTML = tags.map(t => `<span class="cert-lightbox-tag">${t.trim()}</span>`).join('');
         }
 
         if (lightboxVerifyBtn) {
-            if (verifyUrl) {
+            if (verifyUrl && verifyUrl.startsWith('http')) {
                 lightboxVerifyBtn.href = verifyUrl;
                 lightboxVerifyBtn.style.display = 'inline-flex';
-                lightboxVerifyBtn.title = certId ? `Verify Credential (ID: ${certId})` : 'Verify Credential';
+                lightboxVerifyBtn.title = certId ? `Verify Credential (ID: ${certId})` : 'Verify Official Credential';
             } else {
                 lightboxVerifyBtn.style.display = 'none';
             }
@@ -203,19 +230,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    certCards.forEach((card, index) => {
-        const thumb = card.querySelector('.cert-thumb-wrap');
-        const viewBtn = card.querySelector('.cert-view-btn');
+    allCertCards.forEach((card, index) => {
+        const thumb = card.querySelector('.cert-thumb-wrap, .feat-cert-hover, .intern-cert-thumb');
+        const viewBtn = card.querySelector('.cert-view-btn, .feat-quick-view-btn');
 
         if (thumb) {
-            thumb.addEventListener('click', () => openLightbox(index));
+            thumb.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openLightboxWithCard(card, index);
+            });
         }
         if (viewBtn) {
             viewBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                openLightbox(index);
+                openLightboxWithCard(card, index);
             });
         }
+    });
+
+    // Also support special buttons with data-img on experience cards
+    document.querySelectorAll('.exp-inspect-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const fakeCard = document.createElement('div');
+            fakeCard.setAttribute('data-img', btn.getAttribute('data-img'));
+            fakeCard.setAttribute('data-title', btn.getAttribute('data-title'));
+            fakeCard.setAttribute('data-issuer', btn.getAttribute('data-issuer'));
+            fakeCard.setAttribute('data-category', btn.getAttribute('data-category'));
+            fakeCard.setAttribute('data-verify', btn.getAttribute('data-verify'));
+            openLightboxWithCard(fakeCard, 0);
+        });
     });
 
     if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
@@ -224,50 +269,24 @@ document.addEventListener('DOMContentLoaded', () => {
     if (lightboxPrev) {
         lightboxPrev.addEventListener('click', () => {
             if (currentCertIndex > 0) {
-                openLightbox(currentCertIndex - 1);
+                openLightboxWithCard(allCertCards[currentCertIndex - 1], currentCertIndex - 1);
             } else {
-                openLightbox(certCards.length - 1);
+                openLightboxWithCard(allCertCards[allCertCards.length - 1], allCertCards.length - 1);
             }
         });
     }
 
     if (lightboxNext) {
         lightboxNext.addEventListener('click', () => {
-            if (currentCertIndex < certCards.length - 1) {
-                openLightbox(currentCertIndex + 1);
+            if (currentCertIndex < allCertCards.length - 1) {
+                openLightboxWithCard(allCertCards[currentCertIndex + 1], currentCertIndex + 1);
             } else {
-                openLightbox(0);
+                openLightboxWithCard(allCertCards[0], 0);
             }
         });
     }
 
-    // Subtle scroll reveal effect for cards
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -40px 0px'
-    };
-
-    const cardObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-                observer.unobserve(entry.target);
-            }
-        });
-    }, observerOptions);
-
-    const animatedElements = document.querySelectorAll('.box, .exp-card, .hack-card, .edu-card, .skill-category, .cert-column');
-    animatedElements.forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(25px)';
-        el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out, border-color 0.3s ease';
-        cardObserver.observe(el);
-    });
-
-    // ==========================================================================
-    // 60-Second Judge View Modal Handling
-    // ==========================================================================
+    // 8. 60-Second Judge View Modal Handling
     const judgeModal = document.getElementById('judge-view-modal');
     const judgeCloseBtn = document.getElementById('judge-modal-close');
     const judgeBackdrop = document.getElementById('judge-modal-backdrop');
@@ -287,9 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
         judgeModal.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
 
-        setTimeout(() => {
-            isJudgeOpening = false;
-        }, 350);
+        setTimeout(() => { isJudgeOpening = false; }, 350);
 
         if (targetCardId && judgeSheet) {
             setTimeout(() => {
@@ -299,7 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         top: targetCard.offsetTop - 20,
                         behavior: 'smooth'
                     });
-                    targetCard.style.outline = '2px solid #6cff52';
+                    targetCard.style.outline = '2px solid var(--accent-blue)';
                     setTimeout(() => { targetCard.style.outline = ''; }, 2200);
                 }
             }, 150);
@@ -352,9 +369,26 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // ==========================================================================
-    // In-Card Live Frame Reload & Simulator Handlers
-    // ==========================================================================
+    // 9. Keyboard Shortcuts (Escape, J, Arrow Navigation)
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeFeedbackModal();
+            closeLightbox();
+            closeJudgeModal();
+            closeVideoModal();
+            document.querySelectorAll('.sim-qr-overlay.show').forEach(el => el.classList.remove('show'));
+        } else if ((e.key === 'j' || e.key === 'J') && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
+            toggleJudgeModal();
+        } else if (e.key === 'ArrowLeft' && lightbox && lightbox.classList.contains('show')) {
+            if (currentCertIndex > 0) openLightboxWithCard(allCertCards[currentCertIndex - 1], currentCertIndex - 1);
+            else openLightboxWithCard(allCertCards[allCertCards.length - 1], allCertCards.length - 1);
+        } else if (e.key === 'ArrowRight' && lightbox && lightbox.classList.contains('show')) {
+            if (currentCertIndex < allCertCards.length - 1) openLightboxWithCard(allCertCards[currentCertIndex + 1], currentCertIndex + 1);
+            else openLightboxWithCard(allCertCards[0], 0);
+        }
+    });
+
+    // 10. Live Simulator Reload Animations
     const reloadBtns = document.querySelectorAll('.chrome-reload-btn');
     reloadBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -366,30 +400,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const targetEl = document.getElementById(targetId);
 
             if (targetEl) {
-                if (targetEl.tagName === 'IFRAME') {
-                    const currentSrc = targetEl.src;
-                    targetEl.src = '';
-                    setTimeout(() => {
-                        targetEl.src = currentSrc;
-                        btn.style.transform = 'none';
-                    }, 200);
-                } else {
-                    targetEl.style.opacity = '0.35';
-                    targetEl.style.filter = 'blur(2px)';
-                    setTimeout(() => {
-                        targetEl.style.transition = 'opacity 0.4s ease, filter 0.4s ease';
-                        targetEl.style.opacity = '1';
-                        targetEl.style.filter = 'none';
-                        btn.style.transform = 'none';
-                    }, 300);
-                }
+                targetEl.style.opacity = '0.35';
+                targetEl.style.filter = 'blur(2px)';
+                setTimeout(() => {
+                    targetEl.style.transition = 'opacity 0.4s ease, filter 0.4s ease';
+                    targetEl.style.opacity = '1';
+                    targetEl.style.filter = 'none';
+                    btn.style.transform = 'none';
+                }, 300);
             } else {
                 setTimeout(() => { btn.style.transform = 'none'; }, 500);
             }
         });
     });
 
-    // In-Card QR Code Popover Toggle
+    // 11. In-Card Phone QR Popover Toggle
     const qrToggleBtns = document.querySelectorAll('.sim-qr-toggle-btn');
     qrToggleBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -397,9 +422,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.stopPropagation();
             const qrId = btn.getAttribute('data-qr');
             const overlay = document.getElementById(qrId);
-            if (overlay) {
-                overlay.classList.toggle('show');
-            }
+            if (overlay) overlay.classList.toggle('show');
         });
     });
 
@@ -414,7 +437,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Close QR overlays when clicking backdrop
     const qrOverlays = document.querySelectorAll('.sim-qr-overlay');
     qrOverlays.forEach(overlay => {
         overlay.addEventListener('click', (e) => {
@@ -423,4 +445,31 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // 12. Subtle Scroll Reveal Animations without Affecting Performance
+    const observerOptions = {
+        threshold: 0.08,
+        rootMargin: '0px 0px -30px 0px'
+    };
+
+    const cardObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    const animatedElements = document.querySelectorAll(
+        '.case-study-card, .exp-card, .hack-card, .edu-card, .skill-category-card, .repo-card, .featured-cert-card, .intern-cert-card, .video-card'
+    );
+    animatedElements.forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out, border-color 0.25s ease';
+        cardObserver.observe(el);
+    });
+
 });
