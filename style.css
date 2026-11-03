@@ -3223,3 +3223,34 @@ nav ul.links li a.menu-judge-link:hover {
         grid-template-columns: 1fr;
     }
 }
+
+
+/* Dedicated Project Action QR Code Trigger */
+.project-qr-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(24, 24, 24, 0.85);
+    border: 1px solid rgba(108, 255, 82, 0.4);
+    color: #ffffff;
+    font-size: 0.88rem;
+    font-weight: 600;
+    padding: 0.6rem 1.1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+}
+
+.project-qr-btn i {
+    color: #6cff52;
+    font-size: 1.15rem;
+}
+
+.project-qr-btn:hover {
+    background: rgba(108, 255, 82, 0.15);
+    border-color: #6cff52;
+    color: #6cff52;
+    box-shadow: 0 0 15px rgba(108, 255, 82, 0.35);
+    transform: translateY(-2px);
+}
