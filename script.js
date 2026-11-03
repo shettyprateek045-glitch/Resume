@@ -137,6 +137,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Expand / Collapse Remaining Certificates (View All 28)
+    const toggleAllCertsBtn = document.getElementById('btn-toggle-all-certs');
+    const remainingWraps = document.querySelectorAll('.remaining-certs-wrap');
+    if (toggleAllCertsBtn && remainingWraps.length > 0) {
+        let isExpanded = false;
+        toggleAllCertsBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            isExpanded = !isExpanded;
+            remainingWraps.forEach(wrap => {
+                wrap.style.display = isExpanded ? 'block' : 'none';
+            });
+            toggleAllCertsBtn.innerHTML = isExpanded 
+                ? `<i class='bx bx-chevron-up'></i> <span>Show Less (Featured 8 Only)</span>`
+                : `<i class='bx bx-chevron-down'></i> <span>View All 28 Certificates</span>`;
+        });
+    }
+
     // Certificate Lightbox
     const certCards = Array.from(document.querySelectorAll('.cert-item-card'));
     const lightbox = document.getElementById('cert-lightbox');
